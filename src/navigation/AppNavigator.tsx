@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View, StyleSheet, Alert} from 'react-native';
@@ -11,26 +11,62 @@ import {Song} from '../services/DatabaseService';
 
 const Tab = createBottomTabNavigator();
 
+// Unified type for songs in the player
+export type PlayableSong = {
+  youtubeId: string;
+  title: string;
+  artist: string;
+  thumbnail: string;
+  duration: string;
+};
+
 const AppNavigator: React.FC = () => {
-  const [currentSong, setCurrentSong] = useState<
-    (YouTubeVideo | Song) & {id?: string; youtubeId?: string}
-  | null>(null);
+  const [currentSong, setCurrentSong] = useState<PlayableSong | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playlist, setPlaylist] = useState<any[]>([]);
+  const [playlist, setPlaylist] = useState<PlayableSong[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isMounted = useRef(true);
 
   useEffect(() => {
     // Initialize database
-    DatabaseService.initDB().catch(error => {
-      console.error('Failed to initialize database:', error);
-      Alert.alert('Error', 'Failed to initialize database');
-    });
+    const initDatabase = async () => {
+      try {
+        await DatabaseService.initDB();
+      } catch (error) {
+        console.error('Failed to initialize database:', error);
+        if (isMounted.current) {
+          Alert.alert('Error', 'Failed to initialize database');
+        }
+      }
+    };
+
+    initDatabase();
+
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
+  const normalizeSong = (song: YouTubeVideo | Song): PlayableSong => {
+    return {
+      youtubeId: 'youtubeId' in song ? song.youtubeId : song.id,
+      title: song.title,
+      artist: song.artist,
+      thumbnail: song.thumbnail,
+      duration: song.duration,
+    };
+  };
+
   const handleSongSelect = (song: YouTubeVideo | Song) => {
-    setCurrentSong(song);
+    const normalizedSong = normalizeSong(song);
+    setCurrentSong(normalizedSong);
     setIsPlaying(true);
-    console.log('Playing song:', song.title);
+    
+    // Update playlist with current song
+    setPlaylist([normalizedSong]);
+    setCurrentIndex(0);
+    
+    console.log('Playing song:', normalizedSong.title);
   };
 
   const handlePlayPause = () => {

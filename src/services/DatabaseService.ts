@@ -1,6 +1,6 @@
 import SQLite from 'react-native-sqlite-storage';
 
-SQLite.DEBUG(true);
+SQLite.DEBUG(__DEV__);
 SQLite.enablePromise(true);
 
 export interface Song {

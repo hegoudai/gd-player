@@ -22,7 +22,6 @@
     "react-native-track-player": "^4.0.1",
     "react-native-youtube-iframe": "^2.3.0",
     "axios": "^1.12.0",
-    "ytdl-core": "^4.11.5",
     "@react-native-community/slider": "^4.5.0"
   },
   "devDependencies": {

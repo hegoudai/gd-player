@@ -116,8 +116,14 @@ npm test
 - The YouTube service currently uses mock data for demonstration
 - To enable real YouTube search, you need to:
   1. Get a YouTube Data API key from Google Cloud Console
-  2. Update the `YOUTUBE_API_KEY` in `src/services/YouTubeService.ts`
+  2. Set the `YOUTUBE_API_KEY` environment variable
   3. Uncomment the API implementation code in the `searchVideos` method
+- For actual audio playback from YouTube:
+  - The current implementation uses YouTube embed URLs as a placeholder
+  - In a production app, you would need a backend service to extract direct audio streams
+  - Or use `react-native-youtube-iframe` for video playback with YouTube's iframe player
+  - Note: `ytdl-core` and similar Node.js libraries do not work in React Native
+- Database debugging is automatically disabled in production builds
 
 ## License
 

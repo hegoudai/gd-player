@@ -9,8 +9,9 @@ export interface YouTubeVideo {
 }
 
 // Note: In a production app, you should use a proper YouTube Data API key
+// Store API keys in environment variables, never commit them to source control
 // For demonstration purposes, we'll use a mock implementation
-const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY';
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';
 
 class YouTubeService {
   async searchVideos(query: string): Promise<YouTubeVideo[]> {
@@ -128,9 +129,12 @@ class YouTubeService {
   }
 
   getVideoStreamUrl(videoId: string): string {
-    // In a real implementation, you would use ytdl-core or a similar library
-    // to extract the audio stream URL from YouTube
-    // For this demo, we'll use the YouTube embed URL
+    // Note: This returns a YouTube embed URL which is intended for web browsers.
+    // For actual audio playback in React Native, you would need to:
+    // 1. Use a backend service to extract the direct audio stream URL
+    // 2. Use a library like react-native-track-player with the stream URL
+    // 3. Or use react-native-youtube-iframe for video playback
+    // The current implementation is a placeholder for demonstration
     return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
   }
 }

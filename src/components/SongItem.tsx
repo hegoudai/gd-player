@@ -5,12 +5,15 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
+  GestureResponderEvent,
 } from 'react-native';
 import {YouTubeVideo} from '../services/YouTubeService';
+import {Song} from '../services/DatabaseService';
+
+type SongType = YouTubeVideo | Song;
 
 interface SongItemProps {
-  song: YouTubeVideo | any;
+  song: SongType;
   onPress: () => void;
   onAddToCollection?: () => void;
   showAddButton?: boolean;
@@ -37,7 +40,7 @@ const SongItem: React.FC<SongItemProps> = ({
       {showAddButton && onAddToCollection && (
         <TouchableOpacity
           style={styles.addButton}
-          onPress={e => {
+          onPress={(e: GestureResponderEvent) => {
             e.stopPropagation();
             onAddToCollection();
           }}>

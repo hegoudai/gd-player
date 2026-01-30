@@ -19,7 +19,7 @@ const LibraryScreen: React.FC<LibraryScreenProps> = ({onSongSelect}) => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadSongs = async () => {
+  const loadSongs = useCallback(async () => {
     try {
       const allSongs = await DatabaseService.getAllSongs();
       setSongs(allSongs);
@@ -29,12 +29,12 @@ const LibraryScreen: React.FC<LibraryScreenProps> = ({onSongSelect}) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       loadSongs();
-    }, []),
+    }, [loadSongs]),
   );
 
   const handleDeleteSong = async (song: Song) => {
@@ -85,13 +85,7 @@ const LibraryScreen: React.FC<LibraryScreenProps> = ({onSongSelect}) => {
         renderItem={({item}) => (
           <View style={styles.songItemContainer}>
             <View style={styles.songItemWrapper}>
-              <SongItem
-                song={{
-                  ...item,
-                  id: item.youtubeId,
-                }}
-                onPress={() => onSongSelect(item)}
-              />
+              <SongItem song={item} onPress={() => onSongSelect(item)} />
             </View>
             <TouchableOpacity
               style={styles.deleteButton}
